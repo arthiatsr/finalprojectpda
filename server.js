@@ -19,7 +19,7 @@ if(process.env.NODE_ENV === "production"){
 app.use(routes);
 
 // mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/Auth");
-mongoose.connect(process.env.MONGODB_URI || "mongodb://arthiatsr:Iskavsda@01@ds359868.mlab.com:59868/heroku_8cx4grr6");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://arthiatsr:Iskavsda@01@ds259878.mlab.com:59878/heroku_mfzqvh92");
 
 
 const connection = mongoose.connection;
