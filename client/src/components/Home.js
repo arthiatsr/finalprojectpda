@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Component, useEffect } from "react";
+import { BrowserRouter as Router, Route, Link, Redirect, withRouter } from "react-router-dom";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -21,8 +22,12 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import InfoIcon from '@material-ui/icons/Info';
-import emailjs from 'emailjs-com';
-// import './ContactUs.css';
+import Photolist from "./Photolist";
+
+import { STATES } from "mongoose";
+import { urlencoded } from "body-parser";
+import API from "../utils/API";
+
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -104,16 +109,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-//export default function PrimarySearchAppBar() {
 export default function Home(props) {
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [photoChoice, setPhotoChoice] = React.useState("");
-  const [photoArray, setPhotoArray] = React.useState([]);
-
-
+  const [photoArray , setPhotoArray] = React.useState([]);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -142,6 +144,12 @@ export default function Home(props) {
     setAnchorEl(null);
   };
 
+  function mailOpen (){
+
+    props.history.push("/email");
+                      
+  }
+
   const menuId = 'primary-search-account-menu';
   // const renderMenu = (
   //   <Menu
@@ -157,7 +165,7 @@ export default function Home(props) {
   //     <MenuItem onClick={handleMenuClose}>My account</MenuItem>
   //   </Menu>
   // );
-
+  
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -172,7 +180,7 @@ export default function Home(props) {
       <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
-            <MailIcon />
+            <MailIcon onClick={mailOpen}/>
           </Badge>
         </IconButton>
         <p>Messages</p>
@@ -206,154 +214,123 @@ export default function Home(props) {
   }
 
 const photographyApi = event => {
+console.log("i am inside photo")
+  // let searchterm = "London&client_id=";
+  // const apikey = process.env.REACT_APP_API_KEY;
 
-  let searchterm = "London";
-  let apikey = "&client_id="  + "9c57f5d89003eb4d52debe8cf00a3b08d9ce09d143103815e54d50b1a8691927";
-  let query = 'https://api.unsplash.com/search/photos?query=' + searchterm + apikey;
-  console.log(query);
-  axios.get(query)
-      .then(res => setPhotoArray({photoArray: res.data}))
-      
+  API.findData().then(
+    res =>{ setPhotoArray({photoArray: res.data.results}, console.log("res",res.data))}
+  )
+  // let query = 'https://api.unsplash.com/search/photos?query=' + searchterm + apikey;
+  // console.log(query);
+  // axios.get(query)
+      // .then(res => setPhotoArray({photoArray: res.data.results}))     
       .catch(err => console.log(err));
-return(
-  <div>
-    <p>{props.photoArray}</p>
-    {/* <img src={props.photoArray.results[0].urls.raw} alt={props.photoArray.results[0].user.name} ></img> */}
-  </div>
-  // <div className={classes.root}>
-  //   <GridList cellHeight={180} className={classes.gridList}>
-  //     <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
-  //       <ListSubheader component="div">December</ListSubheader>
-  //     </GridListTile>
-  //     {photoArray.map(url => (
-  //       <GridListTile key={this.results.urls}>
-  //         <img src={this.results.urls.raw} alt={this.results.user.name} />
-  //         <GridListTileBar
-  //           title={this.results.user.name}
-  //           subtitle={<span>by: {this.results.user.name}</span>}
-  //           // actionIcon={
-  //           //   <IconButton aria-label={`info about ${tile.title}`} className={classes.icon}>
-  //           //     <InfoIcon />
-  //           //   </IconButton>
-  //           // }
-  //         />
-  //       </GridListTile>
-  //     ))}
-  //   </GridList>
-  // </div>
-);
-
 }
+function renderPhotoList() {
+  console.log(Object.keys(photoArray).length,photoArray)
+  if(Object.keys(photoArray).length>0){  
+    console.log("i am inside",photoArray)
+
   return (
-    <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar>         
-          <div>
-            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
-            <IconButton
-              edge="start"
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="open drawer"
-              >
-              <MenuIcon />
-              <Typography className={classes.title} variant="h6" noWrap>
-                My-Passion
-              </Typography> 
-            </IconButton>
-            </Button>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-            <MenuItem onClick={photographyApi}>Photography</MenuItem>
-            <MenuItem onClick={handleClose}>Lovely Quotes</MenuItem>
-            <MenuItem onClick={handleClose}>Reminders</MenuItem>
-            </Menu>
-          </div>
-          
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-          <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={17} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-            </div>
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
-            <Button onClick={logoutSubmit} className={classes.button} fullWidth variant="contained" color="primary" >Log out</Button> 
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-        {/* {renderMenu} */}
+    
+    <div>      
+      <Photolist photoItems={photoArray} />  
     </div>
+    )
+  }
+}
+
+return (
+  <div className={classes.grow}>
+    <AppBar position="static">
+      <Toolbar>         
+        <div>
+          <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="open drawer"
+            >
+            <MenuIcon />
+            <Typography className={classes.title} variant="h6" noWrap>
+              Click-Me
+            </Typography> 
+          </IconButton>
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={photographyApi}>MyPassion</MenuItem>
+            <MenuItem onClick={handleClose}>Balance Sheet</MenuItem>
+            <MenuItem onClick={handleClose}>Reminders</MenuItem>
+            <MenuItem onClick={handleClose}>Daily News</MenuItem>
+            <MenuItem onClick={handleClose}>Movies Trending in Theater</MenuItem>
+            <MenuItem onClick={handleClose}>Journal</MenuItem>
+          </Menu>
+        </div>
+        
+        <div className={classes.search}>
+          <div className={classes.searchIcon}>
+            <SearchIcon />
+          </div>
+          <InputBase
+            placeholder="Search…"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }}
+            inputProps={{ 'aria-label': 'search' }}
+          />
+        </div>
+        <div className={classes.grow} />
+          <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <MailIcon  onClick={mailOpen}/>
+              </Badge>
+            </IconButton>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
+              <Badge badgeContent={17} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MoreIcon />
+            </IconButton>
+          </div>
+          <Button onClick={logoutSubmit} className={classes.button} fullWidth variant="contained" color="primary" >Log out</Button> 
+        </Toolbar>
+      </AppBar>
+      {renderMobileMenu}
+      {renderPhotoList()}
+
+      {/* {renderMenu} */}
+  </div>
   );
- }
+}
 
-//  export default function ContactUs() {
 
-//   function sendEmail(e) {
-//     e.preventDefault();
-
-//     emailjs.sendForm('3f275478898909dd66ec9c02afd21d3a', 'reach_friend', e.target, 'user_6E17hEsOwkfjk6uHyijD7')
-//       .then((result) => {
-//           console.log(result.text);
-//       }, (error) => {
-//           console.log(error.text);
-//       });
-//   }
-
-//   return (
-//     <form className="contact-form" onSubmit={sendEmail}>
-//       <input type="hidden" name="contact_number" />
-//       <label>Name</label>
-//       <input type="text" name="user_name" />
-//       <label>Email</label>
-//       <input type="email" name="user_email" />
-//       <label>Message</label>
-//       <textarea name="message" />
-//       <input type="submit" value="Send" />
-//     </form>
-//   );
-// }

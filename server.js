@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require("path");
 const app = express();
@@ -6,7 +7,8 @@ const cors = require('cors');
 const routes = require("./routes");
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3001;
-
+const apikey = process.env.REACT_APP_API_KEY;
+console.log("22222",apikey)
 app.use(express.static(path.join(__dirname, "client", "build")))
 app.use(cors());
 app.use(bodyParser.json());
@@ -18,8 +20,8 @@ if(process.env.NODE_ENV === "production"){
 
 app.use(routes);
 
-// mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/Auth");
-mongoose.connect(process.env.MONGODB_URI || "mongodb://arthiatsr:Iskavsda@01@ds259878.mlab.com:59878/heroku_mfzqvh92");
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/Auth");
+//mongoose.connect(process.env.MONGODB_URI || "mongodb://arthiatsr:Iskavsda@01@ds359868.mlab.com:59868/heroku_8cx4grr6");
 
 
 const connection = mongoose.connection;
