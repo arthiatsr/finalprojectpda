@@ -1,3 +1,12 @@
+# GODIGITAL - Personal Digital Assistant
+
+## Summary: 
+
+It is a full stack application. It is in similar lines to a personal digital assistant.
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
